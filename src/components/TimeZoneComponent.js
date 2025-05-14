@@ -95,12 +95,12 @@ const TimeZoneComponent = () => {
             {selectedTimezone && (
                 <div className="time-display">
                     <div className="time-text">{formattedDateTime}</div>
-                    <div className="timezone-indicator" style={{ display: selectedTimezone !== localTime?.id ? 'block' : 'none' }}>
+                    {/* <div className="timezone-indicator" style={{ display: selectedTimezone !== localTime?.id ? 'block' : 'none' }}>
                         (Showing time in selected timezone)
                     </div>
                     <div className="timezone-indicator local" style={{ display: selectedTimezone === localTime?.id ? 'block' : 'none' }}>
                         (Showing your local time)
-                    </div>
+                    </div> */}
                 </div>
             )}
         </div>
