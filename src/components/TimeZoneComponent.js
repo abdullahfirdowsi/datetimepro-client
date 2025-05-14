@@ -12,7 +12,8 @@ const TimeZoneComponent = () => {
     const fetchInitialData = async () => {
       const localTimeData = await getLocalTime();
       setLocalTime(localTimeData);
-      setFormattedDateTime(localTimeData.currentTime);
+      // Don't set formattedDateTime initially, keep it empty
+      
 
       const timezonesData = await getAllTimeZones();
       setTimezones(timezonesData);
@@ -30,7 +31,7 @@ const TimeZoneComponent = () => {
         const timezoneData = await getTimeZoneById(selectedTimezone);
         setFormattedDateTime(timezoneData.currentTime);
       } else {
-        setFormattedDateTime(localTimeData.currentTime); // Default to local time
+        setFormattedDateTime(''); // Leave empty when no timezone is selected
       }
     }, 1000);
 
@@ -41,9 +42,13 @@ const TimeZoneComponent = () => {
     const timeZoneId = event.target.value;
     setSelectedTimezone(timeZoneId);
 
-    // Fetch and set the time immediately upon selection
-    const data = await getTimeZoneById(timeZoneId);
-    setFormattedDateTime(data.currentTime);
+    // Fetch and set the time immediately upon selection only if a timezone is selected
+    if (timeZoneId) {
+      const data = await getTimeZoneById(timeZoneId);
+      setFormattedDateTime(data.currentTime);
+    } else {
+      setFormattedDateTime(''); // Clear the time when no timezone is selected
+    }
   };
 
   return (
@@ -79,6 +84,7 @@ const TimeZoneComponent = () => {
                     onChange={handleTimezoneChange}
                     className="timezone-select"
                 >
+                    <option value="">Select a timezone</option>
                     {timezones.map((tz) => (
                         <option key={tz.id} value={tz.id}>
                             {tz.displayName}
@@ -86,16 +92,17 @@ const TimeZoneComponent = () => {
                     ))}
                 </select>
             </div>
-
-            <div className="time-display">
-                <div className="time-text">{formattedDateTime}</div>
-                <div className="timezone-indicator" style={{ display: selectedTimezone !== localTime?.id ? 'block' : 'none' }}>
-                    (Showing time in selected timezone)
+            {selectedTimezone && (
+                <div className="time-display">
+                    <div className="time-text">{formattedDateTime}</div>
+                    <div className="timezone-indicator" style={{ display: selectedTimezone !== localTime?.id ? 'block' : 'none' }}>
+                        (Showing time in selected timezone)
+                    </div>
+                    <div className="timezone-indicator local" style={{ display: selectedTimezone === localTime?.id ? 'block' : 'none' }}>
+                        (Showing your local time)
+                    </div>
                 </div>
-                <div className="timezone-indicator local" style={{ display: selectedTimezone === localTime?.id ? 'block' : 'none' }}>
-                    (Showing your local time)
-                </div>
-            </div>
+            )}
         </div>
     </div>
   );
